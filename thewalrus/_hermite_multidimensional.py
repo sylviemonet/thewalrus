@@ -16,10 +16,7 @@ Hermite Multidimensional Python interface
 """
 from itertools import product
 from typing import Tuple, Generator
-<<<<<<< HEAD
-=======
 from functools import lru_cache
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
 from numba import jit
 from numba.cpython.unsafe.tuple import tuple_setitem
 import numpy as np
@@ -156,8 +153,6 @@ def hafnian_batched(A, cutoff, mu=None, rtol=1e-05, atol=1e-08, renorm=False, ma
 
 
 # Note the minus signs in the arguments. Those are intentional and are due to the fact that Dodonov et al. in PRA 50, 813 (1994) use (p,q) ordering instead of (q,p) ordering
-<<<<<<< HEAD
-=======
 @lru_cache()
 def partition(photons, cutoff):
     r"""Returns a list of all the ways of putting n photons into modes that have a given cutoff dimension.
@@ -168,7 +163,6 @@ def partition(photons, cutoff):
         cutoff (tuple[int]): the cutoff of each mode
     """
     return [comb for comb in product(*(range(min(photons, i - 1) + 1) for i in cutoff)) if sum(comb) == photons]
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
 
 
 @jit(nopython=True)
@@ -206,15 +200,9 @@ def remove(
 SQRT = np.sqrt(np.arange(1000))  # saving the time to recompute square roots
 
 
-<<<<<<< HEAD
-def hermite_multidimensional_numba(R, cutoff, y, C = 1, dtype=np.complex128):
-    # pylint: disable=too-many-arguments
-    r"""Returns the multidimensional Hermite polynomials :math:`C*H_k^{(R)}(y)`.
-=======
 def hermite_multidimensional_numba(R, cutoff, y, C=1, dtype=None):
     # pylint: disable=too-many-arguments
     r"""Returns the renormalized multidimensional Hermite polynomials :math:`C*H_k^{(R)}(y)`.
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
 
     Here :math:`R` is an :math:`n \times n` square matrix, and
     :math:`y` is an :math:`n` dimensional vector. The polynomials are
@@ -223,11 +211,7 @@ def hermite_multidimensional_numba(R, cutoff, y, C=1, dtype=None):
 
     Args:
         R (array[complex]): square matrix parametrizing the Hermite polynomial
-<<<<<<< HEAD
-        cutoff (int): maximum size of the subindices in the Hermite polynomial
-=======
         cutoff (int or list[int]): maximum sizes of the subindices in the Hermite polynomial
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
         y (vector[complex]): vector argument of the Hermite polynomial
         C (complex): first value of the Hermite polynomials, the default value is 1
         dtype (data type): Specifies the data type used for the calculation
@@ -235,18 +219,6 @@ def hermite_multidimensional_numba(R, cutoff, y, C=1, dtype=None):
     Returns:
         array[data type]: the multidimensional Hermite polynomials
     """
-<<<<<<< HEAD
-    n, _ = R.shape
-    if y.shape[0] != n:
-        raise ValueError("The matrix R and vector y have incompatible dimensions")
-    num_modes = len(y) // 2
-    array = np.zeros(((cutoff,) * (2 * num_modes)), dtype=dtype)
-    array[(0,) * (2 * num_modes)] = C
-    all_idx = product(range(cutoff), repeat=2 * num_modes)
-    next(all_idx)
-    for idx in all_idx:
-        array = fill_hermite_multidimensional_numba_loop(array, idx, R, y)
-=======
     if dtype is None:
         dtype = np.find_common_type([R.dtype.name, y.dtype.name], [np.array(C).dtype.name])
     n, _ = R.shape
@@ -262,17 +234,12 @@ def hermite_multidimensional_numba(R, cutoff, y, C=1, dtype=None):
     for photons in range(1, sum(cutoffs) - num_indices + 1):
         for idx in partition(photons, cutoffs):
             array = fill_hermite_multidimensional_numba_loop(array, idx, R, y)
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
     return array
 
 
 @jit(nopython=True)
 def fill_hermite_multidimensional_numba_loop(array, idx, R, y):  # pragma: no cover
-<<<<<<< HEAD
-    r"""Calculates the Hermite multidimensional polynomial for a given index.
-=======
     r"""Calculates the renormalized Hermite multidimensional polynomial for a given index.
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
 
     Args:
         array (array[data type]): the multidimensional Hermite polynomials
@@ -295,24 +262,14 @@ def fill_hermite_multidimensional_numba_loop(array, idx, R, y):  # pragma: no co
     return array
 
 
-<<<<<<< HEAD
-def grad_hermite_multidimensional_numba(array, R, cutoff, y, C = 1, dtype=np.complex128):
-    # pylint: disable=too-many-arguments
-    r"""Calculates the gradients of the multidimensional Hermite polynomials :math:`C*H_k^{(R)}(y)` with respect to its parameters :math:`C`, :math:`y` and :math:`R`.
-=======
 def grad_hermite_multidimensional_numba(array, R, cutoff, y, C=1, dtype=None):
     # pylint: disable=too-many-arguments
     r"""Calculates the gradients of the renormalized multidimensional Hermite polynomials :math:`C*H_k^{(R)}(y)` with respect to its parameters :math:`C`, :math:`y` and :math:`R`.
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
 
     Args:
         array (array): the multidimensional Hermite polynomials
         R (array[complex]): square matrix parametrizing the Hermite polynomial
-<<<<<<< HEAD
-        cutoff (int): maximum size of the subindices in the Hermite polynomial
-=======
         cutoff (int or list[int]): maximum sizes of the subindices in the Hermite polynomial
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
         y (vector[complex]): vector argument of the Hermite polynomial
         C (complex): first value of the Hermite polynomials
         dtype (data type): Specifies the data type used for the calculation
@@ -320,19 +277,6 @@ def grad_hermite_multidimensional_numba(array, R, cutoff, y, C=1, dtype=None):
     Returns:
         array[data type], array[data type], array[data type]: the gradients of the multidimensional Hermite polynomials with respect to C, R and y
     """
-<<<<<<< HEAD
-    n, _ = R.shape
-    if y.shape[0] != n:
-        raise ValueError("The matrix R and vector y have incompatible dimensions")
-    num_modes = len(y) // 2
-    dG_dC = array / C
-    dG_dR = np.zeros_like(array, dtype=dtype)
-    dG_dy = np.zeros_like(array, dtype=dtype)
-    all_idx = product(range(cutoff), repeat=2 * num_modes)
-    next(all_idx)
-    for idx in all_idx:
-        dG_dR, dG_dy = fill_grad_hermite_multidimensional_numba_loop(dG_dR, dG_dy, array, idx, R, y)
-=======
     if dtype is None:
         dtype = np.find_common_type([array.dtype.name, R.dtype.name, y.dtype.name], [np.array(C).dtype.name])
     n, _ = R.shape
@@ -349,7 +293,6 @@ def grad_hermite_multidimensional_numba(array, R, cutoff, y, C=1, dtype=None):
     for photons in range(1, sum(cutoffs) - num_indices + 1):
         for idx in partition(photons, cutoffs):
             dG_dR, dG_dy = fill_grad_hermite_multidimensional_numba_loop(dG_dR, dG_dy, array, idx, R, y)
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
     return dG_dC, dG_dR, dG_dy
 
 
@@ -358,11 +301,7 @@ def fill_grad_hermite_multidimensional_numba_loop(
     dG_dR, dG_dy, array, idx, R, y
 ):  # pragma: no cover
     # pylint: disable=too-many-arguments
-<<<<<<< HEAD
-    r"""Calculates the gradients of the multidimensional Hermite polynomials for a given index.
-=======
     r"""Calculates the gradients of the renormalized multidimensional Hermite polynomials for a given index.
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
 
     Args:
         dG_dR (array[data type]): array representing the gradients with respect to R
@@ -380,13 +319,6 @@ def fill_grad_hermite_multidimensional_numba_loop(
         if val > 0:
             break
     ki = dec(idx, i)
-<<<<<<< HEAD
-    dy = y[i] * dG_dy[ki] + array[ki]
-    dR = y[i] * dG_dR[ki]
-    for l, kl in remove(ki):
-        dy -= SQRT[ki[l]] * dG_dy[kl] * R[i, l]
-        dR -= SQRT[ki[l]] * (R[i, l] * dG_dR[kl] + array[kl])
-=======
     dy = y[i] * dG_dy[ki]
     dy[i] += array[ki]
     dR = y[i] * dG_dR[ki]
@@ -394,7 +326,6 @@ def fill_grad_hermite_multidimensional_numba_loop(
         dy -= SQRT[ki[l]] * dG_dy[kl] * R[i, l]
         dR -= SQRT[ki[l]] * R[i, l] * dG_dR[kl]
         dR[i, l] -= SQRT[ki[l]] * array[kl]
->>>>>>> a550d52444d2bd1c141ec7c77c47da2a94eb3fe3
     dG_dR[idx] = dR / SQRT[idx[i]]
     dG_dy[idx] = dy / SQRT[idx[i]]
     return dG_dR, dG_dy
